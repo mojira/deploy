@@ -11,10 +11,14 @@ inputs:
     description: "Subscription ID for Azure."
     required: true
   bastion_name:
-    description: "Name of the bastion to deploy to."
+    description: "Name of the Bastion to deploy to."
     required: true
+  bastion_ip:
+    description: "IP of the Bastion tunnel."
+    required: false
+    default: "localhost"
   bastion_port:
-    description: "Port of the bastion tunnel."
+    description: "Port of the Bastion tunnel."
     required: false
     default: "50022"
   resource_group:
@@ -30,7 +34,7 @@ inputs:
     description: "Username for authentication."
     required: true
   artifact_paths:
-    description: "Paths to artifacts (folders or files) to upload. String with exactly one path per line."
+    description: "Paths to artifacts (folders or files) to upload. String with exactly one path per line, and an empty line at the end."
     required: true
   artifact_destination:
     description: "Target folder for artifact upload."
