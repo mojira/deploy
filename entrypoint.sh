@@ -5,7 +5,7 @@ set -eu
 AZURE_CLIENT_ID=$INPUT_AZURE_CLIENT_ID
 AZURE_TENANT_ID=$INPUT_AZURE_TENANT_ID
 AZURE_SUBSCRIPTION_ID=$INPUT_AZURE_SUBSCRIPTION_ID
-az login --tenant $AZURE_TENANT_ID --username $AZURE_CLIENT_ID
+az login
 
 # Open bastion tunnel
 echo Installing prerequisites...
