@@ -63,7 +63,7 @@ runs:
       run: |
         for ARTIFACT_PATH in "${ARTIFACT_PATHS[@]}"; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync -avh --delete -e 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT' $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
+          rsync -avh --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
         done
       shell: bash
       env:
