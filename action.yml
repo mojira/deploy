@@ -3,16 +3,24 @@ description: 'Deploy Mojira community bots to Azure'
 inputs:
   azure_client_id:
     description: "Client ID for Azure."
-    required: true
+    required: false
+    default: ${{ secrets.AZURE_CLIENT_ID }}
   azure_tenant_id:
     description: "Tenant ID for Azure."
-    required: true
+    required: false
+    default: ${{ secrets.AZURE_TENANT_ID }}
   azure_subscription_id:
     description: "Subscription ID for Azure."
-    required: true
+    required: false
+    default: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   bastion_name:
     description: "Name of the bastion to deploy to."
-    required: true
+    required: false
+    default: ${{ secrets.BASTION_NAME }}
+  bastion_port:
+    description: "Port of the bastion tunnel."
+    required: false
+    default: "50022"
   resource_group:
     description: "Resource group to deploy to."
     required: true
@@ -49,13 +57,10 @@ runs:
       run: |
         echo Opening Bastion tunnel...
         az extension add --name bastion
-        az network bastion tunnel --name $BASTION_NAME --resource-group $RESOURCE_GROUP --target-resource-id $RESOURCE_ID --resource-port 22 --port $BASTION_PORT &
-        az network bastion wait --created --name $BASTION_NAME --resource-group $RESOURCE_GROUP
+        az network bastion tunnel --name ${{ inputs.bastion_name }} --resource-group $RESOURCE_GROUP --target-resource-id $RESOURCE_ID --resource-port 22 --port ${{ inputs.bastion_port }} &
+        az network bastion wait --created --name ${{ inputs.bastion_name }} --resource-group $RESOURCE_GROUP
       shell: bash
       env:
-        BASTION_IP: "127.0.0.1"
-        BASTION_PORT: "50022"
-        BASTION_NAME: ${{ inputs.bastion_name }}
         RESOURCE_GROUP: ${{ inputs.resource_group }}
         RESOURCE_ID: ${{ inputs.resource_id }}
     - name: Set up SSH key
@@ -72,25 +77,23 @@ runs:
         echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync -avh --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
+          rsync -avh --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@localhost:$ARTIFACT_DESTINATION
         done < <(printf '%s' "$ARTIFACT_PATHS")
       shell: bash
       env:
-        BASTION_IP: "127.0.0.1"
-        BASTION_PORT: "50022"
+        BASTION_PORT: ${{ inputs.bastion_port }}
         USERNAME: ${{ inputs.username }}
         ARTIFACT_PATHS: ${{ inputs.artifact_paths }}
         ARTIFACT_DESTINATION: ${{ inputs.artifact_destination }}
     - name: Run deploy script
       run: |
         echo Running internal deploy script...
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT $USERNAME@$BASTION_IP <<EOF
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT $USERNAME@localhost <<EOF
           $SCRIPT
         EOF
       shell: bash
       env:
-        BASTION_IP: "127.0.0.1"
-        BASTION_PORT: "50022"
+        BASTION_PORT: ${{ inputs.bastion_port }}
         USERNAME: ${{ inputs.username }}
         SCRIPT: ${{ inputs.script }}
 
