@@ -1,6 +1,15 @@
 name: 'Mojira Deploy'
 description: 'Deploy Mojira community bots to Azure'
 inputs:
+  azure_client_id:
+    description: "Client ID for Azure."
+    required: true
+  azure_tenant_id:
+    description: "Tenant ID for Azure."
+    required: true
+  azure_subscription_id:
+    description: "Subscription ID for Azure."
+    required: true
   bastion_name:
     description: "Name of the bastion to deploy to."
     required: true
