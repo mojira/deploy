@@ -3,20 +3,16 @@ description: 'Deploy Mojira community bots to Azure'
 inputs:
   azure_client_id:
     description: "Client ID for Azure."
-    required: false
-    default: ${{ secrets.AZURE_CLIENT_ID }}
+    required: true
   azure_tenant_id:
     description: "Tenant ID for Azure."
-    required: false
-    default: ${{ secrets.AZURE_TENANT_ID }}
+    required: true
   azure_subscription_id:
     description: "Subscription ID for Azure."
-    required: false
-    default: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    required: true
   bastion_name:
     description: "Name of the bastion to deploy to."
-    required: false
-    default: ${{ secrets.BASTION_NAME }}
+    required: true
   bastion_port:
     description: "Port of the bastion tunnel."
     required: false
