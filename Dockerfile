@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM mcr.microsoft.com/azure-cli:latest
 
 # Label
 LABEL "repository"="http://github.com/mojira/deploy"

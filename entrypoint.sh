@@ -3,7 +3,7 @@ set -eu
 
 # Open bastion tunnel
 echo Installing prerequisites...
-python3 -m pip install --upgrade pip --user
+# python3 -m pip install --upgrade pip --user
 az extension add --name bastion
 
 echo Opening tunnel...
@@ -23,8 +23,10 @@ chmod 600 ~/.ssh/id_rsa
 # Args for artifact deploy
 echo Uploading artifacts...
 for ARTIFACT_PATH in "${INPUT_ARTIFACT_PATHS[@]}"; do
+    echo Uploading artifact $ARTIFACT_PATH...
     rsync -avh --delete -e 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $AZURE_PORT' $GITHUB_WORKSPACE/$ARTIFACT_PATH $INPUT_USERNAME@$AZURE_IP:$INPUT_ARTIFACT_DESTINATION
 done
+echo All artifacts have been uploaded.
 
 # Run deploy script
 echo Running internal deploy script...
