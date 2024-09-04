@@ -62,4 +62,6 @@ All options without a default are required.
 
 - **artifact_destination** - _string_ - Target folder for artifact upload.
 
+- **rsync_args** - _string_ - Arguments for uploading artifacts via rsync. **Default:** `-avhW --delete`
+
 - **script** - _string_ - Script to run after uploading of artifacts. **Default:** (empty)

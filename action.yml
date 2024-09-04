@@ -39,6 +39,10 @@ inputs:
   artifact_destination:
     description: "Target folder for artifact upload."
     required: true
+  rsync_args:
+    description: "Arguments for uploading artifacts via rsync."
+    required: false
+    default: -avhW --delete
   script:
     description: "Script to run after uploading of artifacts."
     required: false
@@ -81,7 +85,7 @@ runs:
         echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync -avh --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
+          rsync $RSYNC_ARGS -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
         done < <(printf '%s' "$ARTIFACT_PATHS")
       shell: bash
       env:
@@ -90,6 +94,7 @@ runs:
         USERNAME: ${{ inputs.username }}
         ARTIFACT_PATHS: ${{ inputs.artifact_paths }}
         ARTIFACT_DESTINATION: ${{ inputs.artifact_destination }}
+        RSYNC_ARGS: ${{ inputs.rsync_args }}
     - name: Run deploy script
       run: |
         echo Running internal deploy script...
