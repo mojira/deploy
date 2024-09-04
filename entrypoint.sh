@@ -1,12 +1,6 @@
 #!/bin/sh
 set -eu
 
-# Log in to Azure CLI
-AZURE_CLIENT_ID=$INPUT_AZURE_CLIENT_ID
-AZURE_TENANT_ID=$INPUT_AZURE_TENANT_ID
-AZURE_SUBSCRIPTION_ID=$INPUT_AZURE_SUBSCRIPTION_ID
-az login
-
 # Open bastion tunnel
 echo Installing prerequisites...
 # python3 -m pip install --upgrade pip --user
