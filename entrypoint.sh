@@ -4,6 +4,7 @@ set -eu
 # Open bastion tunnel
 echo Installing prerequisites...
 # python3 -m pip install --upgrade pip --user
+az login
 az extension add --name bastion
 
 echo Opening tunnel...
