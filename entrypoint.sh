@@ -1,3 +1,6 @@
+#!/bin/sh
+set -eu
+
 # Open bastion tunnel
 echo Installing prerequisites...
 python3 -m pip install --upgrade pip --user
