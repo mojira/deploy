@@ -37,8 +37,53 @@ inputs:
     default: ""
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'composite'
+  steps:
+    - name: Open Bastion tunnel
+      run: |
+        BASTION_IP=127.0.0.1
+        BASTION_PORT=50022
+
+        az extension add --name bastion
+        az network bastion tunnel --name $BASTION_NAME --resource-group $RESOURCE_GROUP --target-resource-id $RESOURCE_ID --resource-port 22 --port $BASTION_PORT &
+        az network bastion wait --created --name $BASTION_NAME --resource-group $RESOURCE_GROUP
+      shell: bash
+      env:
+        BASTION_NAME: ${{ inputs.bastion_name }}
+        RESOURCE_GROUP: ${{ inputs.resource_group }}
+        RESOURCE_ID: ${{ inputs.resource_id }}
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+      shell: bash
+      env:
+        SSH_PRIVATE_KEY: ${{ inputs.ssh_private_key }}
+    - name: Upload artifacts
+      run: |
+        echo Bastion IP = $BASTION_IP
+        echo Bastion port = $BASTION_PORT
+        for ARTIFACT_PATH in "${ARTIFACT_PATHS[@]}"; do
+          echo Uploading artifact $ARTIFACT_PATH...
+          rsync -avh --delete -e 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT' $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
+        done
+      shell: bash
+      env:
+        USERNAME: ${{ inputs.username }}
+        ARTIFACT_PATHS: ${{ inputs.artifact_paths }}
+        ARTIFACT_DESTINATION: ${{ inputs.artifact_destination }}
+    - name: Run deploy script
+      run: |
+        echo Bastion IP = $BASTION_IP
+        echo Bastion port = $BASTION_PORT
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT $USERNAME@$BASTION_IP << EOF
+          $SCRIPT
+        EOF
+      shell: bash
+      env:
+        USERNAME: ${{ inputs.username }}
+        SCRIPT: ${{ inputs.script }}
 
 branding:
   color: "green"
