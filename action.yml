@@ -1,0 +1,36 @@
+name: 'Mojira Deploy'
+description: 'Deploy Mojira community bots to Azure'
+inputs:
+  bastion_name:
+    description: "Name of the bastion to deploy to."
+    required: true
+  resource_group:
+    description: "Resource group to deploy to."
+    required: true
+  resource_id:
+    description: "Resource ID to deploy to."
+    required: true
+  ssh_private_key:
+    description: "Private SSH key to use for connecting."
+    required: true
+  username:
+    description: "Username for authentication."
+    required: true
+  artifact_paths:
+    description: "Paths to artifacts (folders or files) to upload. String with exactly one path per line."
+    required: true
+  artifact_destination:
+    description: "Target folder for artifact upload."
+    required: true
+  script:
+    description: "Script to run after uploading of artifacts."
+    required: false
+    default: ""
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  color: "green"
+  icon: "upload-cloud"
