@@ -81,10 +81,11 @@ runs:
         echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync -avh --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@localhost:$ARTIFACT_DESTINATION
+          rsync -avh --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
         done < <(printf '%s' "$ARTIFACT_PATHS")
       shell: bash
       env:
+        BASTION_IP: ${{ inputs.bastion_ip }}
         BASTION_PORT: ${{ inputs.bastion_port }}
         USERNAME: ${{ inputs.username }}
         ARTIFACT_PATHS: ${{ inputs.artifact_paths }}
@@ -92,11 +93,12 @@ runs:
     - name: Run deploy script
       run: |
         echo Running internal deploy script...
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT $USERNAME@localhost <<EOF
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT $USERNAME@$BASTION_IP <<EOF
           $SCRIPT
         EOF
       shell: bash
       env:
+        BASTION_IP: ${{ inputs.bastion_ip }}
         BASTION_PORT: ${{ inputs.bastion_port }}
         USERNAME: ${{ inputs.username }}
         SCRIPT: ${{ inputs.script }}
