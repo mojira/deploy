@@ -53,10 +53,14 @@ runs:
       run: |
         echo Opening Bastion tunnel...
         az extension add --name bastion
-        az network bastion tunnel --name ${{ inputs.bastion_name }} --resource-group $RESOURCE_GROUP --target-resource-id $RESOURCE_ID --resource-port 22 --port ${{ inputs.bastion_port }} &
-        az network bastion wait --created --name ${{ inputs.bastion_name }} --resource-group $RESOURCE_GROUP
+        az network bastion tunnel --name $BASTION_NAME \
+          --resource-group $RESOURCE_GROUP --target-resource-id $RESOURCE_ID \
+          --resource-port 22 --port $BASTION_PORT &
+        az network bastion wait --created --name $BASTION_NAME --resource-group $RESOURCE_GROUP
       shell: bash
       env:
+        BASTION_NAME: ${{ inputs.bastion_name }}
+        BASTION_PORT: ${{ inputs.bastion_port }}
         RESOURCE_GROUP: ${{ inputs.resource_group }}
         RESOURCE_ID: ${{ inputs.resource_id }}
     - name: Set up SSH key
