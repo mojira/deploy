@@ -42,7 +42,7 @@ inputs:
   rsync_args:
     description: "Arguments for uploading artifacts via rsync."
     required: false
-    default: -avhW --delete
+    default: -avhWR --delete
   script:
     description: "Script to run after uploading of artifacts."
     required: false
