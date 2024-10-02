@@ -42,7 +42,7 @@ inputs:
   rsync_args:
     description: "Arguments for uploading artifacts via rsync."
     required: false
-    default: -avhWR --delete
+    default: -avhW --delete
   script:
     description: "Script to run after uploading of artifacts."
     required: false
@@ -85,7 +85,7 @@ runs:
         echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync $RSYNC_ARGS -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
+          rsync $RSYNC_ARGS -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
         done < <(printf '%s' "$ARTIFACT_PATHS")
       shell: bash
       env:
