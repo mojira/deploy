@@ -50,7 +50,6 @@ runs:
       with:
         host: $VPS_HOST
         username: $VPS_USER
-        key: $VPS_SSH_KEY
         script: |
           cd $ARTIFACT_DESTINATION
           $SCRIPT
