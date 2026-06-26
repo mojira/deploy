@@ -50,7 +50,7 @@ runs:
       with:
         host: ${{ inputs.vps_host }}
         username: ${{ inputs.vps_user }}
-        key: ${{ inputs.vps_key }}
+        key: ${{ inputs.vps_ssh_key }}
         script: |
           cd ${{ inputs.artifact_destination }}
           ${{ inputs.script }}
