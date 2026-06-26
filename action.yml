@@ -44,6 +44,7 @@ runs:
           ARTIFACT_SLASH_PATH=/$ARTIFACT_PATH
           rsync $RSYNC_ARGS $GITHUB_WORKSPACE/$ARTIFACT_PATH $VPS_USER@$VPS_HOST:$ARTIFACT_DESTINATION${ARTIFACT_SLASH_PATH%/*}
         done < <(printf '%s' "$ARTIFACT_PATHS")
+      shell: bash
     - name: Run Deploy Script
       uses: appleboy/ssh-action@v1.2.5
       with:
