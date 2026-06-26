@@ -15,7 +15,6 @@ jobs:
       uses: mojira/deploy@main
       with:
         vps_host: ${{ secrets.VPS_HOST }}
-        vps_user: ${{ secrets.VPS_USER }}
         vps_ssh_key: ${{ secrets.VPS_SSH_KEY }}
         vps_known_hosts: ${{ secrets.VPS_KNOWN_HOSTS }}
         artifact_paths: |
@@ -34,7 +33,7 @@ All options without a default are required.
 
 - **vps_host** - _string_ - The VPS host's IP address or domain name.
 
-- **vps_user** - _string_ - User name for authentication.
+- **vps_user** - _string_ - User name for authentication. **Default:** `mojira`
 
 - **vps_ssh_key** - _string_ - Private SSH key to use for connecting.
 

@@ -6,7 +6,8 @@ inputs:
     required: true
   vps_user:
     description: "User name for authentication."
-    required: true
+    required: false
+    default: "mojira"
   vps_ssh_key:
     description: "Private SSH key to use for connecting."
     required: true
@@ -32,7 +33,7 @@ runs:
   using: 'composite'
   steps:
     - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
+      uses: shimataro/ssh-key-action@v2.8.1
       with:
         key: $VPS_SSH_KEY
         known_hosts: $VPS_KNOWN_HOSTS
@@ -44,7 +45,7 @@ runs:
           rsync $RSYNC_ARGS $GITHUB_WORKSPACE/$ARTIFACT_PATH $VPS_USER@$VPS_HOST:$ARTIFACT_DESTINATION${ARTIFACT_SLASH_PATH%/*}
         done < <(printf '%s' "$ARTIFACT_PATHS")
     - name: Run Deploy Script
-      uses: appleboy/ssh-action@v1
+      uses: appleboy/ssh-action@v1.2.5
       with:
         host: $VPS_HOST
         username: $VPS_USER
