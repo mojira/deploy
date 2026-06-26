@@ -1,37 +1,8 @@
 name: 'Mojira Deploy'
-description: 'Deploy Mojira community bots to Azure'
+description: 'Deploy Mojira community bots to the Mojira VPS'
 inputs:
-  azure_client_id:
-    description: "Client ID for Azure."
-    required: true
-  azure_tenant_id:
-    description: "Tenant ID for Azure."
-    required: true
-  azure_subscription_id:
-    description: "Subscription ID for Azure."
-    required: true
-  bastion_name:
-    description: "Name of the Bastion to deploy to."
-    required: true
-  bastion_ip:
-    description: "IP of the Bastion tunnel."
-    required: false
-    default: "localhost"
-  bastion_port:
-    description: "Port of the Bastion tunnel."
-    required: false
-    default: "50022"
-  resource_group:
-    description: "Resource group to deploy to."
-    required: true
-  resource_id:
-    description: "Resource ID to deploy to."
-    required: true
-  ssh_private_key:
-    description: "Private SSH key to use for connecting."
-    required: true
-  username:
-    description: "Username for authentication."
+  project_folder:
+    description: "Folder name for this project on the Mojira VPS."
     required: true
   artifact_paths:
     description: "Paths to artifacts (folders or files) to upload. String with exactly one path per line, and an empty line at the end."
@@ -51,62 +22,25 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Log in to Azure CLI
-      uses: azure/login@v3
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
       with:
-        client-id: ${{ inputs.azure_client_id }}
-        tenant-id: ${{ inputs.azure_tenant_id }}
-        subscription-id: ${{ inputs.azure_subscription_id }}
-    - name: Open Bastion tunnel
+        key: ${{ secrets.VPS_SSH_KEY }}
+        known_hosts: ${{ secrets.VPS_KNOWN_HOSTS }}
+    - name: Upload Artifacts
       run: |
-        echo Opening Bastion tunnel...
-        az extension add --name bastion
-        az network bastion tunnel --name $BASTION_NAME \
-          --resource-group $RESOURCE_GROUP --target-resource-id $RESOURCE_ID \
-          --resource-port 22 --port $BASTION_PORT &
-        az network bastion wait --created --name $BASTION_NAME --resource-group $RESOURCE_GROUP
-      shell: bash
-      env:
-        BASTION_NAME: ${{ inputs.bastion_name }}
-        BASTION_PORT: ${{ inputs.bastion_port }}
-        RESOURCE_GROUP: ${{ inputs.resource_group }}
-        RESOURCE_ID: ${{ inputs.resource_id }}
-    - name: Set up SSH key
-      run: |
-        echo Setting up SSH key...
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-      shell: bash
-      env:
-        SSH_PRIVATE_KEY: ${{ inputs.ssh_private_key }}
-    - name: Upload artifacts
-      run: |
-        echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync $RSYNC_ARGS -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT" $GITHUB_WORKSPACE/$ARTIFACT_PATH $USERNAME@$BASTION_IP:$ARTIFACT_DESTINATION
+          rsync $RSYNC_ARGS $GITHUB_WORKSPACE/$ARTIFACT_PATH ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:$PROJECT_FOLDER/$ARTIFACT_DESTINATION
         done < <(printf '%s' "$ARTIFACT_PATHS")
-      shell: bash
-      env:
-        BASTION_IP: ${{ inputs.bastion_ip }}
-        BASTION_PORT: ${{ inputs.bastion_port }}
-        USERNAME: ${{ inputs.username }}
-        ARTIFACT_PATHS: ${{ inputs.artifact_paths }}
-        ARTIFACT_DESTINATION: ${{ inputs.artifact_destination }}
-        RSYNC_ARGS: ${{ inputs.rsync_args }}
-    - name: Run deploy script
-      run: |
-        echo Running internal deploy script...
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p $BASTION_PORT $USERNAME@$BASTION_IP <<EOF
-          $SCRIPT
-        EOF
-      shell: bash
-      env:
-        BASTION_IP: ${{ inputs.bastion_ip }}
-        BASTION_PORT: ${{ inputs.bastion_port }}
-        USERNAME: ${{ inputs.username }}
-        SCRIPT: ${{ inputs.script }}
+    - name: Run Deploy Script
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_SSH_PORT }}
+        script: $SCRIPT
 
 branding:
   color: "green"
