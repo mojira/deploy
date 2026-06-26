@@ -14,6 +14,10 @@ jobs:
     - name: Deploy
       uses: mojira/deploy@main
       with:
+        vps_host: ${{ secrets.VPS_HOST }}
+        vps_user: ${{ secrets.VPS_USER }}
+        vps_ssh_key: ${{ secrets.VPS_SSH_KEY }}
+        vps_known_hosts: ${{ secrets.VPS_KNOWN_HOSTS }}
         project_folder: example
         artifact_paths: |
           build/lib
@@ -28,6 +32,14 @@ jobs:
 ## Options
 
 All options without a default are required.
+
+- **vps_host** - _string_ - The VPS host's IP address or domain name.
+
+- **vps_user** - _string_ - User name for authentication.
+
+- **vps_ssh_key** - _string_ - Private SSH key to use for connecting.
+
+- **vps_known_hosts** - _string_ - Known Hosts file to use for connecting with SSH.
 
 - **project_folder** - _string_ - The folder name for this project on the Mojira VPS. Use a different one for each project to avoid conflicts!
 

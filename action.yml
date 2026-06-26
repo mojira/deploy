@@ -1,6 +1,18 @@
 name: 'Mojira Deploy'
 description: 'Deploy Mojira community bots to the Mojira VPS'
 inputs:
+  vps_host:
+    description: "The VPS host's IP address or domain name."
+    required: true
+  vps_user:
+    description: "User name for authentication."
+    required: true
+  vps_ssh_key:
+    description: "Private SSH key to use for connecting."
+    required: true
+  vps_known_hosts:
+    description: "Known Hosts file to use for connecting with SSH."
+    required: true
   project_folder:
     description: "Folder name for this project on the Mojira VPS."
     required: true
@@ -25,21 +37,20 @@ runs:
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
       with:
-        key: ${{ secrets.VPS_SSH_KEY }}
-        known_hosts: ${{ secrets.VPS_KNOWN_HOSTS }}
+        key: $VPS_SSH_KEY
+        known_hosts: $VPS_KNOWN_HOSTS
     - name: Upload Artifacts
       run: |
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
-          rsync $RSYNC_ARGS $GITHUB_WORKSPACE/$ARTIFACT_PATH ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:$PROJECT_FOLDER/$ARTIFACT_DESTINATION
+          rsync $RSYNC_ARGS $GITHUB_WORKSPACE/$ARTIFACT_PATH $VPS_USER@$VPS_HOST:$PROJECT_FOLDER/$ARTIFACT_DESTINATION
         done < <(printf '%s' "$ARTIFACT_PATHS")
     - name: Run Deploy Script
       uses: appleboy/ssh-action@v1
       with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        port: ${{ secrets.VPS_SSH_PORT }}
+        host: $VPS_HOST
+        username: $VPS_USER
+        key: $VPS_SSH_KEY
         script: $SCRIPT
 
 branding:
