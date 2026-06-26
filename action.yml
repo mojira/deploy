@@ -52,8 +52,6 @@ runs:
         username: ${{ inputs.vps_user }}
         key: ${{ inputs.vps_ssh_key }}
         script: |
-          pwd
-          ls
           cd ${{ inputs.artifact_destination }}
           ${{ inputs.script }}
 
