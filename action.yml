@@ -58,6 +58,8 @@ runs:
         username: ${{ inputs.vps_user }}
         key: ${{ inputs.vps_ssh_key }}
         script: |
+          source ~/.profile
+          source ~/.nvm/nvm.sh
           cd ~/${{ inputs.project_folder }}
           git pull
           ${{ inputs.script }}
