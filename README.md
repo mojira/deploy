@@ -17,7 +17,7 @@ jobs:
         vps_host: ${{ secrets.VPS_HOST }}
         vps_ssh_key: ${{ secrets.VPS_SSH_KEY }}
         vps_known_hosts: ${{ secrets.VPS_KNOWN_HOSTS }}
-        project-folder: example-app
+        project_folder: example-app
         artifact_paths: |
           build/lib/
           build/bin/
