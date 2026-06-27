@@ -14,14 +14,13 @@ inputs:
   vps_known_hosts:
     description: "Known Hosts file to use for connecting with SSH."
     required: true
+  project_folder:
+    description: "The folder for this project on the VPS."
+    required: true
   artifact_paths:
     description: "Paths to artifacts (folders or files) to upload. String with exactly one path per line, and an empty line at the end."
     required: false
     default: ""
-  artifact_destination:
-    description: "Target folder for artifact upload."
-    required: false
-    default: "."
   rsync_args:
     description: "Arguments for uploading artifacts via rsync."
     required: false
@@ -47,7 +46,7 @@ runs:
           ARTIFACT_SLASH_PATH=/$ARTIFACT_PATH
           rsync ${{ inputs.rsync_args }} \
             "$GITHUB_WORKSPACE/${ARTIFACT_PATH%/}" \
-            "${{ inputs.vps_user }}@${{ inputs.vps_host }}:${{ inputs.artifact_destination }}${ARTIFACT_SLASH_PATH%/*}"
+            "${{ inputs.vps_user }}@${{ inputs.vps_host }}:${{ inputs.project_folder }}${ARTIFACT_SLASH_PATH%/*}"
         done <<< "${{ inputs.artifact_paths }}"
       shell: bash
     - name: Run Deploy Script
@@ -56,7 +55,9 @@ runs:
         host: ${{ inputs.vps_host }}
         username: ${{ inputs.vps_user }}
         key: ${{ inputs.vps_ssh_key }}
-        script: ${{ inputs.script }}
+        script: |
+          cd ~/${{ inputs.project_folder }}
+          ${{ inputs.script }}
         request_pty: true
 
 branding:
