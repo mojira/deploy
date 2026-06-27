@@ -39,9 +39,9 @@ All options without a default are required.
 
 - **vps_known_hosts** - _string_ - Known Hosts file to use for connecting with SSH.
 
-- **artifact_paths** - _string_ - Paths to artifacts (folders or files) to upload. String with exactly one path per line, and an empty line at the end. Folders must have a trailing `/`.
+- **artifact_paths** - _string_ - Paths to artifacts (folders or files) to upload. String with exactly one path per line, and an empty line at the end. Folders must have a trailing `/`. **Default:** (empty)
 
-- **artifact_destination** - _string_ - Target folder for artifact upload.
+- **artifact_destination** - _string_ - Target folder for artifact upload. **Default:** `.`
 
 - **rsync_args** - _string_ - Arguments for uploading artifacts via rsync. **Default:** `-avhW --delete`
 

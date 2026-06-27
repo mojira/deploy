@@ -16,10 +16,12 @@ inputs:
     required: true
   artifact_paths:
     description: "Paths to artifacts (folders or files) to upload. String with exactly one path per line, and an empty line at the end."
-    required: true
+    required: false
+    default: ""
   artifact_destination:
     description: "Target folder for artifact upload."
-    required: true
+    required: false
+    default: "."
   rsync_args:
     description: "Arguments for uploading artifacts via rsync."
     required: false
