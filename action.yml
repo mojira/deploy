@@ -57,6 +57,7 @@ runs:
         key: ${{ inputs.vps_ssh_key }}
         script: |
           cd ~/${{ inputs.project_folder }}
+          git pull
           ${{ inputs.script }}
         request_pty: true
 
