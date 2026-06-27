@@ -55,6 +55,7 @@ runs:
         username: ${{ inputs.vps_user }}
         key: ${{ inputs.vps_ssh_key }}
         script: ${{ inputs.script }}
+        request_pty: true
 
 branding:
   color: "green"
