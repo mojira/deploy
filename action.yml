@@ -40,7 +40,7 @@ runs:
         known_hosts: ${{ inputs.vps_known_hosts }}
     - name: Upload Artifacts
       run: |
-        if [[ -z "${{ inputs.artifact_paths }}" ]]; then
+        if [[ -n "${{ inputs.artifact_paths }}" ]]; then
           echo Uploading artifacts...
           while IFS= read -r ARTIFACT_PATH; do
             echo Uploading artifact $ARTIFACT_PATH...
