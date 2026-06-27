@@ -39,20 +39,14 @@ runs:
         known_hosts: ${{ inputs.vps_known_hosts }}
     - name: Upload Artifacts
       run: |
-        echo "DEBUG: VPS_USER = '$INPUT_VPS_USER'"
-        echo "DEBUG: VPS_HOST = '$INPUT_VPS_HOST'"
-        echo "DEBUG: ARTIFACT_DESTINATION = '$INPUT_ARTIFACT_DESTINATION'"
-        echo "DEBUG: ARTIFACT_PATHS = '$INPUT_ARTIFACT_PATHS'"
-        echo "DEBUG: RSYNC_ARGS = '$INPUT_RSYNC_ARGS'"
-
         echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
           ARTIFACT_SLASH_PATH=/$ARTIFACT_PATH
-          rsync $INPUT_RSYNC_ARGS \
+          rsync ${{ inputs.rsync_args }} \
             "$GITHUB_WORKSPACE/${ARTIFACT_PATH%/}" \
-            "$INPUT_VPS_USER@$INPUT_VPS_HOST:$INPUT_ARTIFACT_DESTINATION${ARTIFACT_SLASH_PATH%/*}"
-        done <<< "$INPUT_ARTIFACT_PATHS"
+            "${{ inputs.vps_user }}@${{ inputs.vps_host }}:${{ inputs.artifact_destination }}${ARTIFACT_SLASH_PATH%/*}"
+        done <<< "${{ inputs.artifact_paths }}"
       shell: bash
     - name: Run Deploy Script
       uses: appleboy/ssh-action@v1.2.5
