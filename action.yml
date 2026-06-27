@@ -63,7 +63,6 @@ runs:
           cd ~/${{ inputs.project_folder }}
           git pull
           ${{ inputs.script }}
-        request_pty: true
 
 branding:
   color: "green"
