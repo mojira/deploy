@@ -41,6 +41,8 @@ runs:
     - name: Upload Artifacts
       run: |
         if [[ -n "${{ inputs.artifact_paths }}" ]]; then
+          echo Error: Artifact upload temporarily disabled.
+          exit 1
           echo Uploading artifacts...
           while IFS= read -r ARTIFACT_PATH; do
             echo Uploading artifact $ARTIFACT_PATH...
