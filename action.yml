@@ -39,6 +39,12 @@ runs:
         known_hosts: ${{ inputs.vps_known_hosts }}
     - name: Upload Artifacts
       run: |
+        echo "DEBUG: VPS_USER = '$INPUT_VPS_USER'"
+        echo "DEBUG: VPS_HOST = '$INPUT_VPS_HOST'"
+        echo "DEBUG: ARTIFACT_DESTINATION = '$INPUT_ARTIFACT_DESTINATION'"
+        echo "DEBUG: ARTIFACT_PATHS = '$INPUT_ARTIFACT_PATHS'"
+        echo "DEBUG: RSYNC_ARGS = '$INPUT_RSYNC_ARGS'"
+
         echo Uploading artifacts...
         while IFS= read -r ARTIFACT_PATH; do
           echo Uploading artifact $ARTIFACT_PATH...
